@@ -1,0 +1,42 @@
+.SUFFIXES: .cpp .o .h .c
+
+include incpath
+
+TARGETS= ../cuda_dg_annealer.so  ../cuda_bg_annealer.so  ../cuda_formulas.so ../cuda_device.so
+cuda_formulas_so_OBJS=cuda_formulas.o
+cuda_dg_annealer_so_OBJS=cuda_dg_annealer.o
+cuda_bg_annealer_so_OBJS=cuda_bg_annealer.o
+cuda_device_so_OBJS=cuda_device.o
+
+CXX=g++
+CC=gcc
+CFLAGS=-g -O2 -Wall -ggdb -Wno-format-security -I../../../.. -fopenmp -fPIC
+CXXFLAGS=$(CFLAGS) -std=c++11
+LDFLAGS=-L../../../../sqaodc/.libs -lsqaodc_cuda -lsqaodc
+
+
+all: $(TARGETS)
+
+../cuda_formulas.so: $(cuda_formulas_so_OBJS)
+	$(CXX) -shared $(CXXFLAGS) $< $(LDFLAGS)  -o $@
+
+../cuda_dg_annealer.so: $(cuda_dg_annealer_so_OBJS)
+	$(CXX) -shared $(CXXFLAGS) $< $(LDFLAGS)  -o $@
+
+
+../cuda_bg_annealer.so: $(cuda_bg_annealer_so_OBJS)
+	$(CXX) -shared $(CXXFLAGS) $< $(LDFLAGS)  -o $@
+
+
+../cuda_device.so: $(cuda_device_so_OBJS)
+	$(CXX) -shared $(CXXFLAGS) $< $(LDFLAGS)  -o $@
+
+%.o: %.cpp 
+	$(CXX) -c $(INCLUDE) $(CXXFLAGS) $< -o $@
+
+%.o: %.c
+	$(CC) -c $(INCLUDE) $(CFLAGS) $< -o $@
+
+
+.PHONY:
+
